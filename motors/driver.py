@@ -1,3 +1,4 @@
+import gc
 import RPi.GPIO as GPIO
 
 
@@ -61,4 +62,6 @@ class MotorDriver:
         self.stop()
         self.pwm_a.stop()
         self.pwm_b.stop()
+        del self.pwm_a, self.pwm_b
+        gc.collect()  # force __del__ before lgpio handle closes
         GPIO.cleanup()
