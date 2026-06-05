@@ -59,4 +59,6 @@ class MotorDriver:
 
     def cleanup(self):
         self.stop()
+        self.pwm_a.stop()
+        self.pwm_b.stop()
         GPIO.cleanup()
