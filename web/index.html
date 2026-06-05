@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rover Control</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111; color: #eee; font-family: monospace; display: flex; flex-direction: column; align-items: center; height: 100vh; }
+    #stream { width: 100%; max-width: 640px; }
+    #stream img { width: 100%; display: block; }
+    #controls { padding: 16px; text-align: center; }
+    #status { font-size: 12px; color: #888; margin-top: 8px; }
+    .keys { display: grid; grid-template-columns: repeat(3, 56px); gap: 6px; justify-content: center; margin-top: 12px; }
+    .key { width: 56px; height: 56px; border: 1px solid #444; background: #222; color: #eee; font-size: 18px; border-radius: 6px; display: flex; align-items: center; justify-content: center; user-select: none; cursor: pointer; transition: background 0.1s; }
+    .key.active { background: #555; }
+  </style>
+</head>
+<body>
+  <div id="stream">
+    <img src="/stream" alt="FPV stream" onerror="this.style.opacity=0.3">
+  </div>
+  <div id="controls">
+    <div id="status">Connecting...</div>
+    <div class="keys">
+      <div></div>
+      <div class="key" id="key-w">W</div>
+      <div></div>
+      <div class="key" id="key-a">A</div>
+      <div class="key" id="key-s">S</div>
+      <div class="key" id="key-d">D</div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#666">WASD to drive &bull; release to stop</div>
+  </div>
+
+  <script>
+    const WS_PORT = 8081;
+    let ws, reconnectTimer;
+
+    function connect() {
+      ws = new WebSocket(`ws://${location.hostname}:${WS_PORT}`);
+      ws.onopen = () => { document.getElementById("status").textContent = "Connected"; };
+      ws.onclose = () => {
+        document.getElementById("status").textContent = "Disconnected — retrying...";
+        reconnectTimer = setTimeout(connect, 2000);
+      };
+    }
+
+    function send(cmd) {
+      if (ws && ws.readyState === WebSocket.OPEN) ws.send(cmd);
+    }
+
+    const keyMap = { w: "forward", s: "backward", a: "left", d: "right" };
+
+    document.addEventListener("keydown", e => {
+      const cmd = keyMap[e.key.toLowerCase()];
+      if (cmd) { send(cmd); document.getElementById(`key-${e.key.toLowerCase()}`)?.classList.add("active"); }
+    });
+    document.addEventListener("keyup", e => {
+      const cmd = keyMap[e.key.toLowerCase()];
+      if (cmd) { send("stop"); document.getElementById(`key-${e.key.toLowerCase()}`)?.classList.remove("active"); }
+    });
+
+    document.querySelectorAll(".key").forEach(el => {
+      const key = el.id.replace("key-", "");
+      el.addEventListener("pointerdown", () => { send(keyMap[key]); el.classList.add("active"); });
+      el.addEventListener("pointerup",   () => { send("stop"); el.classList.remove("active"); });
+      el.addEventListener("pointerleave",() => { send("stop"); el.classList.remove("active"); });
+    });
+
+    connect();
+  </script>
+</body>
+</html>

@@ -49,3 +49,6 @@ rplcd_i2c_mock.CharLCD = MagicMock(return_value=mock_lcd_instance)
 rplcd_mock.i2c = rplcd_i2c_mock
 sys.modules["RPLCD"] = rplcd_mock
 sys.modules["RPLCD.i2c"] = rplcd_i2c_mock
+
+# --- websockets mock (not installed in dev env) ---
+sys.modules["websockets"] = MagicMock()
