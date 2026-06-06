@@ -24,21 +24,21 @@ class BluetoothController:
                 break
             if event.type != ecodes.EV_ABS:
                 continue
-            # D-pad vertical: -1 = up (forward), 1 = down (backward), 0 = released
-            if event.code == ecodes.ABS_HAT0Y:
-                if event.value == -1:
+            # Vertical axis: 0 = up (forward), 255 = down (backward), 127 = released
+            if event.code == ecodes.ABS_Y:
+                if event.value == 0:
                     self.motors.forward(DRIVE_SPEED)
-                elif event.value == 1:
+                elif event.value == 255:
                     self.motors.backward(DRIVE_SPEED)
-                else:
+                elif event.value == 127:
                     self.motors.stop()
-            # D-pad horizontal: -1 = left, 1 = right, 0 = released
-            elif event.code == ecodes.ABS_HAT0X:
-                if event.value == -1:
+            # Horizontal axis: 0 = left, 255 = right, 127 = released
+            elif event.code == ecodes.ABS_X:
+                if event.value == 0:
                     self.motors.turn_left(TURN_SPEED)
-                elif event.value == 1:
+                elif event.value == 255:
                     self.motors.turn_right(TURN_SPEED)
-                else:
+                elif event.value == 127:
                     self.motors.stop()
 
     def start(self):
