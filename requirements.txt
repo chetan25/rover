@@ -1,4 +1,5 @@
 rpi-lgpio
+evdev
 picamera2==0.3.21
 RPLCD==1.3.0
 anthropic>=0.50.0

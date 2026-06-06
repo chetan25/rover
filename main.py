@@ -12,7 +12,7 @@ from motors.driver import MotorDriver
 from sensors.ultrasonic import Ultrasonic
 from display.lcd import LCD
 from modes.autonomous import AutonomousMode
-from modes.manual import ManualMode
+from modes.bluetooth import BluetoothController
 from camera.vision import ClaudeVision
 from camera.stream import start_stream
 from picamera2 import Picamera2
@@ -42,8 +42,8 @@ def main():
     vision = ClaudeVision(lcd=lcd, camera=camera, camera_lock=camera_lock)
     vision.start()
 
-    manual = ManualMode(motors)
-    manual.start()
+    bt = BluetoothController(motors)
+    bt.start()
 
     lcd.write("Rover ready!", "Exploring...")
     time.sleep(1)

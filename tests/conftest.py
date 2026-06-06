@@ -52,3 +52,18 @@ sys.modules["RPLCD.i2c"] = rplcd_i2c_mock
 
 # --- websockets mock (not installed in dev env) ---
 sys.modules["websockets"] = MagicMock()
+
+# --- evdev mock (Linux-only, not available on Windows) ---
+evdev_mock = types.ModuleType("evdev")
+evdev_mock.InputDevice = MagicMock()
+evdev_mock.list_devices = MagicMock(return_value=[])
+
+ecodes_mock = types.ModuleType("evdev.ecodes")
+ecodes_mock.EV_ABS = 3
+ecodes_mock.EV_KEY = 1
+ecodes_mock.ABS_HAT0X = 16
+ecodes_mock.ABS_HAT0Y = 17
+evdev_mock.ecodes = ecodes_mock
+
+sys.modules["evdev"] = evdev_mock
+sys.modules["evdev.ecodes"] = ecodes_mock

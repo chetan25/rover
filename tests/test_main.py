@@ -9,7 +9,7 @@ def test_main_initialises_all_components_without_error():
          patch("main.Picamera2") as MockCamera, \
          patch("main.start_stream"), \
          patch("main.ClaudeVision") as MockVision, \
-         patch("main.ManualMode") as MockManual, \
+         patch("main.BluetoothController") as MockBT, \
          patch("main.AutonomousMode") as MockAuto, \
          patch("main.GPIO"), \
          patch("main.time.sleep"):
